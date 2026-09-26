@@ -293,7 +293,7 @@ footer{background:var(--black); color:#d8d8d8; padding:56px 24px 26px;}
 
 <script>
 /* ---- animação de scroll (frames do carro) ---- */
-const HERO_FRAME_COUNT = 20;
+const HERO_FRAME_COUNT = 50;
 const HERO_FRAME_PATH = "frames/frame_"; // pasta "frames/" ao lado deste arquivo
 const HERO_FRAME_EXT = ".jpg";
 function heroFrameUrl(i){ return HERO_FRAME_PATH + String(i + 1).padStart(3, "0") + HERO_FRAME_EXT; }
@@ -310,7 +310,7 @@ let heroLoadedCount = 0;
 let heroCurrentFrame = -1;
 
 function heroResizeCanvas(){
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
   const rect = heroSticky.getBoundingClientRect();
   heroCanvas.width = rect.width * dpr;
   heroCanvas.height = rect.height * dpr;
@@ -331,17 +331,31 @@ function heroDrawFrame(index, force){
   heroCtx.drawImage(img, dx, dy, dw, dh);
 }
 function heroPreload(onDone){
-  for (let i = 0; i < HERO_FRAME_COUNT; i++){
+  let nextToLoad = 0;
+  const loadNext = () => {
+    if (nextToLoad >= HERO_FRAME_COUNT) return;
+    const i = nextToLoad++;
     const img = new Image();
+    img.decoding = "async";
     img.src = heroFrameUrl(i);
-    img.onload = img.onerror = function(){
+    img.onload = async function(){
+      try { if (img.decode) await img.decode(); } catch(e) {}
       heroLoadedCount++;
       const pct = Math.round((heroLoadedCount / HERO_FRAME_COUNT) * 100);
       if (heroLoaderText) heroLoaderText.textContent = "Carregando " + pct + "%";
       if (heroLoadedCount === HERO_FRAME_COUNT) onDone();
+      else loadNext();
+    };
+    img.onerror = function(){
+      heroLoadedCount++;
+      const pct = Math.round((heroLoadedCount / HERO_FRAME_COUNT) * 100);
+      if (heroLoaderText) heroLoaderText.textContent = "Carregando " + pct + "%";
+      if (heroLoadedCount === HERO_FRAME_COUNT) onDone();
+      else loadNext();
     };
     heroImages[i] = img;
-  }
+  };
+  loadNext();
 }
 let heroTicking = false;
 function heroClamp(v, min, max){ return Math.min(Math.max(v, min), max); }
