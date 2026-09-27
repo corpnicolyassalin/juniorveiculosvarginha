@@ -292,86 +292,152 @@ footer{background:var(--black); color:#d8d8d8; padding:56px 24px 26px;}
 </a>
 
 <script>
-/* ---- animação de scroll (frames do carro) ---- */
+/* ---- animação de scroll (versão otimizada) ---- */
 const HERO_FRAME_COUNT = 50;
-const HERO_FRAME_PATH = "frames/frame_"; // pasta "frames/" ao lado deste arquivo
+const HERO_FRAME_PATH = "frames/frame_";
 const HERO_FRAME_EXT = ".jpg";
-function heroFrameUrl(i){ return HERO_FRAME_PATH + String(i + 1).padStart(3, "0") + HERO_FRAME_EXT; }
+
+function heroFrameUrl(i){
+  return HERO_FRAME_PATH + String(i + 1).padStart(3, "0") + HERO_FRAME_EXT;
+}
 
 const heroPrefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const heroScrollEl = document.getElementById("heroScroll");
 const heroSticky = document.querySelector(".hero-scroll__sticky");
 const heroCanvas = document.getElementById("heroCanvas");
-const heroCtx = heroCanvas.getContext("2d", { alpha: false });
+const heroCtx = heroCanvas.getContext("2d", { alpha:false, desynchronized:true });
 const heroLoader = document.getElementById("loader");
 const heroLoaderText = document.getElementById("loaderText");
+
 const heroImages = new Array(HERO_FRAME_COUNT);
 let heroLoadedCount = 0;
 let heroCurrentFrame = -1;
+let heroPendingFrame = -1;
+let heroRaf = 0;
 
 function heroResizeCanvas(){
   const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
   const rect = heroSticky.getBoundingClientRect();
-  heroCanvas.width = rect.width * dpr;
-  heroCanvas.height = rect.height * dpr;
+
+  heroCanvas.width = Math.max(1, Math.round(rect.width * dpr));
+  heroCanvas.height = Math.max(1, Math.round(rect.height * dpr));
+  heroCanvas.style.width = rect.width + "px";
+  heroCanvas.style.height = rect.height + "px";
+
   heroCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  heroDrawFrame(Math.max(heroCurrentFrame, 0), true);
+  heroDrawFrame(heroCurrentFrame >= 0 ? heroCurrentFrame : 0, true);
 }
-function heroDrawFrame(index, force){
+
+function heroDrawFrame(index, force = false){
+  index = Math.max(0, Math.min(HERO_FRAME_COUNT - 1, index));
+
   if (!force && index === heroCurrentFrame) return;
+
   const img = heroImages[index];
-  if (!img || !img.complete || img.naturalWidth === 0) return;
-  heroCurrentFrame = index;
-  const cw = heroSticky.clientWidth, ch = heroSticky.clientHeight;
-  const iw = img.naturalWidth, ih = img.naturalHeight;
+  if (!img || !img.complete || !img.naturalWidth) return;
+
+  const cw = heroSticky.clientWidth;
+  const ch = heroSticky.clientHeight;
+  const iw = img.naturalWidth;
+  const ih = img.naturalHeight;
+
   const scale = Math.max(cw / iw, ch / ih);
-  const dw = iw * scale, dh = ih * scale;
-  const dx = (cw - dw) / 2, dy = (ch - dh) / 2;
+  const dw = iw * scale;
+  const dh = ih * scale;
+  const dx = (cw - dw) * 0.5;
+  const dy = (ch - dh) * 0.5;
+
   heroCtx.clearRect(0, 0, cw, ch);
   heroCtx.drawImage(img, dx, dy, dw, dh);
+  heroCurrentFrame = index;
 }
+
+function heroRequestFrame(index){
+  heroPendingFrame = index;
+
+  if (heroRaf) return;
+
+  heroRaf = requestAnimationFrame(() => {
+    heroRaf = 0;
+    const next = heroPendingFrame;
+    heroPendingFrame = -1;
+
+    if (next >= 0) heroDrawFrame(next, false);
+  });
+}
+
+function heroUpdateFromScroll(){
+  const rect = heroScrollEl.getBoundingClientRect();
+  const totalScrollable = Math.max(1, heroScrollEl.offsetHeight - window.innerHeight);
+  const progress = Math.min(1, Math.max(0, -rect.top / totalScrollable));
+
+  const index = Math.min(
+    HERO_FRAME_COUNT - 1,
+    Math.floor(progress * HERO_FRAME_COUNT)
+  );
+
+  heroRequestFrame(index);
+}
+
+async function heroDecodeImage(img){
+  if (!img.complete || !img.naturalWidth) return false;
+
+  try{
+    if (img.decode) await img.decode();
+  }catch(e){}
+
+  return !!img.naturalWidth;
+}
+
 function heroPreload(onDone){
-  for (let i = 0; i < HERO_FRAME_COUNT; i++){
+  for(let i = 0; i < HERO_FRAME_COUNT; i++){
     const img = new Image();
     img.decoding = "async";
-    img.src = heroFrameUrl(i);
-    img.onload = img.onerror = function(){
+    img.loading = "eager";
+
+    img.onload = async () => {
+      await heroDecodeImage(img);
+
       heroLoadedCount++;
+
       const pct = Math.round((heroLoadedCount / HERO_FRAME_COUNT) * 100);
-      if (heroLoaderText) heroLoaderText.textContent = "Carregando " + pct + "%";
-      if (heroLoadedCount === HERO_FRAME_COUNT) onDone();
+      if(heroLoaderText) heroLoaderText.textContent = "Carregando " + pct + "%";
+
+      if(heroLoadedCount === HERO_FRAME_COUNT) onDone();
     };
+
+    img.onerror = () => {
+      heroLoadedCount++;
+
+      const pct = Math.round((heroLoadedCount / HERO_FRAME_COUNT) * 100);
+      if(heroLoaderText) heroLoaderText.textContent = "Carregando " + pct + "%";
+
+      if(heroLoadedCount === HERO_FRAME_COUNT) onDone();
+    };
+
+    img.src = heroFrameUrl(i);
     heroImages[i] = img;
   }
 }
-let heroTicking = false;
-function heroClamp(v, min, max){ return Math.min(Math.max(v, min), max); }
-function heroOnScroll(){
-  if (heroTicking) return;
-  heroTicking = true;
-  requestAnimationFrame(function(){
-    const rect = heroScrollEl.getBoundingClientRect();
-    const totalScrollable = heroScrollEl.offsetHeight - window.innerHeight;
-    const progress = totalScrollable > 0 ? heroClamp(-rect.top / totalScrollable, 0, 1) : 0;
-    const index = Math.round(progress * (HERO_FRAME_COUNT - 1));
-    heroDrawFrame(index, false);
-    heroTicking = false;
-  });
-}
+
 function heroInit(){
   heroResizeCanvas();
-  if (heroPrefersReducedMotion){
+  heroDrawFrame(0, true);
+
+  if(heroLoader) heroLoader.classList.add("hidden");
+
+  if(heroPrefersReducedMotion){
     heroDrawFrame(HERO_FRAME_COUNT - 1, true);
-    if (heroLoader) heroLoader.classList.add("hidden");
-    window.addEventListener("resize", heroResizeCanvas);
+    window.addEventListener("resize", heroResizeCanvas, { passive:true });
     return;
   }
-  heroDrawFrame(0, true);
-  if (heroLoader) heroLoader.classList.add("hidden");
-  window.addEventListener("scroll", heroOnScroll, { passive: true });
-  window.addEventListener("resize", heroResizeCanvas);
-  heroOnScroll();
+
+  window.addEventListener("scroll", heroUpdateFromScroll, { passive:true });
+  window.addEventListener("resize", heroResizeCanvas, { passive:true });
+
+  heroUpdateFromScroll();
 }
+
 heroPreload(heroInit);
 /* ---- fim animação de scroll ---- */
 
