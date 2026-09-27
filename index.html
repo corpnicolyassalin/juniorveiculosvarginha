@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Junior Veículos Varginha MG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --bg-alt:#f6f6f4; --ink:#111111; --ink-soft:#5a5a5a;
+  --red:#d90429; --red-dark:#a90321; --black:#111111; --line:#e8e8e6;
+  --card:#ffffff; --radius:14px;
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,sans-serif;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  box-sizing:border-box;
+}
+/* Paleta fixa da marca (branco/vermelho/preto) — não muda com o tema do sistema */
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-padding-top:calc(78px + env(safe-area-inset-top,0px)); scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--ink); line-height:1.5; overflow-x:hidden;}
+h1,h2,h3{font-family:'Archivo',sans-serif; letter-spacing:-0.02em;}
+img{max-width:100%; display:block;}
+a{color:inherit; text-decoration:none;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
+button{font-family:inherit; cursor:pointer; border:none;}
+
+/* header */
+header{position:sticky; top:env(safe-area-inset-top,0px); z-index:50; background:var(--bg); border-bottom:1px solid var(--line);}
+.nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto;}
+.logo{font-family:'Archivo',sans-serif; font-weight:800; font-size:1.3rem;}
+.logo-badge{background:#111111; padding:9px 16px; border-radius:10px; display:inline-flex; align-items:center;}
+.logo-badge img{height:32px; width:auto; display:block;}
+.footer-logo img{height:38px; width:auto; display:block;}
+
+.logo span{color:var(--red);}
+.nav-links{display:flex; gap:28px; font-size:.94rem; font-weight:500;}
+.nav-right{display:flex; align-items:center; gap:14px;}
+.btn{padding:11px 20px; border-radius:8px; font-weight:600; font-size:.9rem; display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, opacity .15s ease;}
+.btn:hover{transform:translateY(-1px);}
+.btn-red{background:var(--red); color:#fff;}
+.btn-red:hover{background:var(--red-dark);}
+.btn-outline{border:1.5px solid var(--ink); color:var(--ink); background:transparent;}
+.btn-dark{background:var(--black); color:#fff;}
+.wa-icon{width:22px; height:22px; fill:#25D366;}
+.burger{display:none; flex-direction:column; gap:5px; background:none;}
+.burger span{width:24px; height:2px; background:var(--ink); display:block;}
+.mobile-menu{display:none; flex-direction:column; padding:8px 24px 20px; gap:14px; border-top:1px solid var(--line);}
+.mobile-menu.open{display:flex;}
+@media (max-width:860px){
+  .nav-links{display:none;}
+  .burger{display:flex;}
+  .nav-right .btn-red{display:none;}
+}
+
+/* hero */
+.hero{position:relative; background:linear-gradient(135deg,var(--black) 0%,#2a2a2a 100%); color:#fff; padding:90px 24px 60px;}
+.hero-inner{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:center;}
+.hero h1{font-size:clamp(2.1rem,4.5vw,3.4rem); font-weight:800; line-height:1.05;}
+.hero p{margin-top:16px; color:#d4d4d4; font-size:1.05rem; max-width:44ch;}
+.hero-btns{display:flex; gap:14px; margin-top:30px; flex-wrap:wrap;}
+.hero-art{background:linear-gradient(160deg,#3a3a3a,#1a1a1a); border-radius:var(--radius); aspect-ratio:4/3; display:flex; align-items:center; justify-content:center; border:1px solid #3a3a3a;}
+.hero-art svg{width:65%; opacity:.9;}
+@media (max-width:860px){ .hero-inner{grid-template-columns:1fr;} .hero-art{order:-1;} }
+
+/* search bar */
+.search-card{max-width:1180px; margin:-38px auto 0; background:var(--card); border-radius:var(--radius); box-shadow:0 18px 40px rgba(0,0,0,.14); padding:26px; position:relative; z-index:5; border:1px solid var(--line);}
+.search-card h3{font-size:1.05rem; margin-bottom:16px;}
+.search-grid{display:grid; grid-template-columns:repeat(5,1fr) auto; gap:12px;}
+.search-grid select{padding:11px 12px; border-radius:8px; border:1px solid var(--line); background:var(--bg-alt); color:var(--ink); font-size:.88rem;}
+@media (max-width:900px){ .search-grid{grid-template-columns:1fr 1fr;} }
+
+/* section titles */
+.section{padding:70px 24px;}
+.section-head{max-width:640px; margin:0 auto 38px;}
+.section-head.left{margin:0 0 38px;}
+.section-head h2{font-size:clamp(1.6rem,3vw,2.1rem); font-weight:800;}
+.section-head p{color:var(--ink-soft); margin-top:8px;}
+.alt{background:var(--bg-alt);}
+
+/* vehicle cards */
+.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; max-width:1180px; margin:0 auto;}
+.cat-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:30px 22px; text-align:center; transition:box-shadow .2s ease, transform .2s ease;}
+.cat-card:hover{box-shadow:0 16px 32px rgba(0,0,0,.1); transform:translateY(-3px);}
+.cat-icon{width:60px; height:60px; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; background:var(--bg-alt); border-radius:50%;}
+.cat-icon svg{width:30px; height:30px;}
+.cat-card h3{font-size:1.05rem; font-weight:700; margin-bottom:8px;}
+.cat-card p{font-size:.87rem; color:var(--ink-soft); margin-bottom:20px; min-height:2.6em;}
+.cat-card .btn{width:100%; justify-content:center;}
+.cta-banner{max-width:900px; margin:0 auto; background:var(--black); color:#fff; border-radius:var(--radius); padding:48px 32px; text-align:center;}
+.cta-banner h2{font-size:clamp(1.4rem,3vw,2rem); font-weight:800;}
+.cta-banner p{color:#d4d4d4; margin:12px auto 26px; max-width:50ch;}
+
+@media (max-width:960px){ .grid{grid-template-columns:1fr 1fr;} }
+@media (max-width:640px){ .grid{grid-template-columns:1fr;} }
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; transition:box-shadow .2s ease, transform .2s ease;}
+.card:hover{box-shadow:0 16px 32px rgba(0,0,0,.1); transform:translateY(-3px);}
+.card-photo{aspect-ratio:16/10; position:relative; display:flex; align-items:center; justify-content:center;}
+.card-photo svg{width:56%; opacity:.55;}
+.badge{position:absolute; top:12px; left:12px; background:var(--red); color:#fff; font-size:.72rem; font-weight:700; padding:5px 10px; border-radius:6px;}
+.card-body{padding:18px 18px 20px;}
+.card-body h3{font-size:1.08rem; font-weight:700;}
+.specs{display:flex; gap:10px; flex-wrap:wrap; color:var(--ink-soft); font-size:.82rem; margin:8px 0 14px;}
+.specs span{background:var(--bg-alt); padding:4px 9px; border-radius:6px;}
+.price{font-size:1.3rem; font-weight:800; color:var(--red);}
+.price-old{font-size:.9rem; color:var(--ink-soft); text-decoration:line-through; font-weight:500;}
+.card-actions{display:flex; gap:10px; margin-top:14px;}
+.card-actions .btn{flex:1; justify-content:center; font-size:.82rem; padding:10px;}
+
+/* about */
+.about-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:50px; max-width:1180px; margin:0 auto; align-items:center;}
+.about-grid p{color:var(--ink-soft); margin-top:14px; max-width:52ch;}
+.feature-list{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:26px;}
+.feature{border:1px solid var(--line); border-radius:10px; padding:16px; background:var(--card);}
+.feature strong{display:block; margin-bottom:4px; font-size:.95rem;}
+.feature{font-size:.85rem; color:var(--ink-soft);}
+.about-visual{background:var(--bg-alt); border-radius:var(--radius); aspect-ratio:1597/985; overflow:hidden; border:1px solid var(--line);}
+.about-visual img{width:100%; height:100%; object-fit:cover; display:block;}
+.about-visual svg{width:50%;}
+@media (max-width:860px){ .about-grid{grid-template-columns:1fr;} .about-visual{order:-1;} }
+
+/* testimonials */
+.tgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; max-width:1180px; margin:0 auto;}
+@media (max-width:860px){ .tgrid{grid-template-columns:1fr;} }
+.tcard{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:22px;}
+.stars{color:var(--red); letter-spacing:2px; margin-bottom:10px; font-size:.9rem;}
+.tcard p{font-size:.92rem; color:var(--ink-soft);}
+.tname{display:flex; align-items:center; gap:10px; margin-top:16px;}
+.avatar{width:36px; height:36px; border-radius:50%; background:var(--black); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.85rem;}
+.tname strong{font-size:.9rem;}
+
+/* location */
+.loc-grid{display:grid; grid-template-columns:.9fr 1.1fr; gap:40px; max-width:1180px; margin:0 auto; align-items:center;}
+.loc-info div{margin-bottom:14px; font-size:.94rem;}
+.loc-info b{display:block; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--red); margin-bottom:3px;}
+.map-box{background:var(--bg-alt); border:1px solid var(--line); border-radius:var(--radius); aspect-ratio:16/10; overflow:hidden; color:var(--ink-soft); font-size:.85rem;}
+.map-box iframe{width:100%; height:100%; border:0; display:block;}
+@media (max-width:860px){ .loc-grid{grid-template-columns:1fr;} .map-box{order:-1;} }
+
+/* footer */
+footer{background:var(--black); color:#d8d8d8; padding:56px 24px 26px;}
+.foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:32px; max-width:1180px; margin:0 auto;}
+.foot-grid h4{color:#fff; font-size:.86rem; margin-bottom:14px;}
+.foot-grid a, .foot-grid li{display:block; font-size:.85rem; color:#a8a8a8; margin-bottom:9px; list-style:none;}
+.foot-bottom{max-width:1180px; margin:36px auto 0; padding-top:20px; border-top:1px solid #2c2c2c; font-size:.78rem; color:#8a8a8a; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+@media (max-width:760px){ .foot-grid{grid-template-columns:1fr 1fr;} }
+
+/* whatsapp float */
+.wa-float{position:fixed; bottom:calc(22px + env(safe-area-inset-bottom,0px)); right:22px; z-index:60; background:#25D366; width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(0,0,0,.25);}
+.wa-float svg{width:28px; height:28px; fill:#fff;}
+
+/* hero scroll animation */
+.hero-scroll{position:relative; height:350vh; background:#000;}
+.hero-scroll__sticky{position:sticky; top:0; height:100vh; width:100%; overflow:hidden; background:#000;}
+#heroVideo{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; background:#000;}
+.hero-scroll__loader{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:#000; color:#ccc; font-size:.85rem; letter-spacing:.04em; z-index:3; transition:opacity .4s ease;}
+.hero-scroll__loader.hidden{opacity:0; pointer-events:none;}
+.hero-scroll__content{position:absolute; left:0; right:0; bottom:9%; z-index:2; text-align:center; padding:0 24px; color:#fff;}
+.hero-scroll__content h1{font-size:clamp(2.1rem,4.5vw,3.4rem); font-weight:800; line-height:1.05;}
+.hero-scroll__content p{margin-top:14px; color:#d4d4d4; font-size:1.05rem;}
+.hero-scroll__content .hero-btns{justify-content:center; margin-top:26px;}
+@media (prefers-reduced-motion: reduce){ .hero-scroll{height:100vh;} .hero-scroll__sticky{position:relative;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo"><span class="logo-badge"><img src="logo/junior-veiculos-logo.png" alt="Junior Veículos"></span></div>
+    <nav class="nav-links">
+      <a href="#hero">Início</a>
+      <a href="#estoque">Estoque</a>
+      <a href="#ofertas">Ofertas</a>
+      <a href="#vender">Venda seu carro</a>
+      <a href="#sobre">Sobre nós</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <div class="nav-right">
+      <a href="https://wa.me/5535988473653" aria-label="WhatsApp">
+        <svg class="wa-icon" viewBox="0 0 32 32"><path d="M16 2C8.3 2 2 8.3 2 16c0 2.6.7 5.1 2 7.3L2 30l6.9-1.8c2.1 1.2 4.6 1.8 7.1 1.8 7.7 0 14-6.3 14-14S23.7 2 16 2zm0 25.5c-2.2 0-4.4-.6-6.3-1.7l-.4-.3-4.1 1.1 1.1-4-.3-.4C4.8 20.2 4.2 18.1 4.2 16c0-6.5 5.3-11.8 11.8-11.8S27.8 9.5 27.8 16 22.5 27.5 16 27.5zm6.5-8.8c-.4-.2-2.1-1-2.4-1.2s-.6-.2-.8.2-.8 1-1 1.2-.4.2-.7.1c-.4-.2-1.5-.6-2.9-1.8-1.1-1-1.8-2.2-2-2.5-.2-.4 0-.6.2-.8.2-.1.4-.4.5-.6.2-.2.2-.4.3-.6.1-.2.1-.4 0-.6s-.8-2-1.2-2.7c-.3-.7-.6-.6-.8-.6h-.7c-.2 0-.6.1-.9.4-.3.4-1.2 1.1-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.9 5.1.8.4 1.5.6 2 .7.8.2 1.6.2 2.2.1.7-.1 2.1-.8 2.4-1.6.3-.8.3-1.4.2-1.6-.1-.1-.4-.2-.8-.4z"/></svg>
+      </a>
+      <a href="#contato" class="btn btn-red">Fale conosco</a>
+      <button class="burger" onclick="document.getElementById('mmenu').classList.toggle('open')"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mmenu">
+    <a href="#hero">Início</a><a href="#estoque">Estoque</a><a href="#ofertas">Ofertas</a>
+    <a href="#vender">Venda seu carro</a><a href="#sobre">Sobre nós</a><a href="#contato">Contato</a>
+    <a href="#contato" class="btn btn-red" style="text-align:center;justify-content:center">Fale conosco</a>
+  </div>
+</header>
+
+<section class="hero-scroll" id="heroScroll">
+  <div class="hero-scroll__sticky">
+    <video id="heroVideo" class="hero-video" muted playsinline preload="auto" aria-label="Apresentação de veículo">
+      <source src="hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-scroll__content">
+      <h1>Seu próximo carro<br>está aqui.</h1>
+      <p>Qualidade, confiança e as melhores oportunidades para você.</p>
+      <div class="hero-btns">
+        <a href="#estoque" class="btn btn-red">Ver estoque</a>
+        <a href="https://wa.me/5535988473653" class="btn btn-outline" style="border-color:#fff;color:#fff">Falar no WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="estoque">
+  <div class="section-head">
+    <h2>O que temos no estoque</h2>
+    <p>Trabalhamos com veículos das principais categorias — fale com a gente pra ver o que está disponível agora.</p>
+  </div>
+  <div class="grid cat-grid" id="catGrid"></div>
+</section>
+
+<section class="section alt" id="ofertas">
+  <div class="cta-banner">
+    <h2>Quer saber as condições de hoje?</h2>
+    <p>Preços, troca e parcelas variam conforme o veículo — fale direto com a gente no WhatsApp e veja as opções disponíveis agora.</p>
+    <a class="btn btn-red" href="https://wa.me/5535988473653?text=Ol%C3%A1!%20Quero%20saber%20as%20condi%C3%A7%C3%B5es%20e%20ofertas%20dispon%C3%ADveis.">Ver ofertas no WhatsApp</a>
+  </div>
+</section>
+
+<section class="section" id="vender">
+  <div class="section-head">
+    <h2>Quer vender ou trocar seu carro?</h2>
+    <p>Aceitamos seu usado na troca. Manda os dados do seu veículo pelo WhatsApp que a gente já te passa uma avaliação.</p>
+  </div>
+  <div style="max-width:480px; margin:0 auto; text-align:center;">
+    <a class="btn btn-red" style="justify-content:center; width:100%;" href="https://wa.me/5535988473653?text=Ol%C3%A1!%20Quero%20vender%2Ftrocar%20meu%20carro.">Enviar meu carro pelo WhatsApp</a>
+  </div>
+</section>
+
+<section class="section" id="sobre">
+  <div class="about-grid">
+    <div>
+      <h2 style="font-size:clamp(1.6rem,3vw,2.1rem);font-weight:800">Sobre a Junior Veículos</h2>
+      <p>Loja em Varginha e região, com estoque de veículos selecionados e condições facilitadas para você trocar ou financiar o seu próximo carro.</p>
+      <div class="feature-list">
+        <div class="feature"><strong>Aceita seu usado</strong>Aceitamos seu carro usado na troca.</div>
+        <div class="feature"><strong>Financiamento bancário</strong>Em até 60x, com aprovação facilitada.</div>
+        <div class="feature"><strong>Parcelamento no cartão</strong>Em até 21x com juros, direto no cartão.</div>
+        <div class="feature"><strong>Atendimento em Varginha</strong>Loja física em Varginha-MG e região.</div>
+      </div>
+    </div>
+    <div class="about-visual">
+      <img src="img/fachada-loja.jpg" alt="Fachada da loja Junior Veículos em Varginha-MG" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="section-head">
+    <h2>O que nossos clientes dizem</h2>
+  </div>
+  <div class="tgrid">
+    <div class="tcard"><div class="stars">★★★★★</div><p>Comprei meu Civic sem burocracia, todo o processo foi rápido e transparente.</p><div class="tname"><div class="avatar">R</div><strong>Rafael M.</strong></div></div>
+    <div class="tcard"><div class="stars">★★★★★</div><p>Atendimento excelente, me ajudaram a simular o financiamento na hora.</p><div class="tname"><div class="avatar">C</div><strong>Camila S.</strong></div></div>
+    <div class="tcard"><div class="stars">★★★★★</div><p>Vendi meu carro antigo e comprei outro na loja, tudo muito prático.</p><div class="tname"><div class="avatar">L</div><strong>Lucas A.</strong></div></div>
+  </div>
+</section>
+
+<section class="section" id="contato">
+  <div class="loc-grid">
+    <div class="loc-info">
+      <h2 style="font-size:1.7rem;font-weight:800;margin-bottom:18px">Visite nossa loja</h2>
+      <div><b>Endereço</b>Al. Otávio Marquês de Paiva, 205 — Santa Luiza, Varginha - MG, 37062-670</div>
+      <div><b>Telefone / WhatsApp</b>(35) 98847-3653</div>
+      <div><b>Instagram</b><a href="https://instagram.com/juniorveiculosvarginhamg" target="_blank" style="color:var(--ink)">@juniorveiculosvarginhamg</a></div>
+      <div><b>Horário</b>Seg. a Sáb. — 8h às 18h</div>
+      <a href="https://www.google.com/maps/search/?api=1&query=Alameda%20Ot%C3%A1vio%20Marqu%C3%AAs%20de%20Paiva%2C%20205%2C%20Santa%20Luiza%2C%20Varginha%2C%20MG%2C%2037062-670" class="btn btn-dark" style="margin-top:8px">Como chegar</a>
+    </div>
+    <div class="map-box"><iframe src="https://www.google.com/maps?q=Alameda%20Ot%C3%A1vio%20Marqu%C3%AAs%20de%20Paiva%2C%20205%2C%20Santa%20Luiza%2C%20Varginha%2C%20MG%2C%2037062-670&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Localização da loja no mapa"></iframe></div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="logo footer-logo"><img src="logo/junior-veiculos-logo.png" alt="Junior Veículos"></div>
+      <p style="font-size:.85rem;color:#a8a8a8;margin-top:12px;max-width:32ch">Aceita seu usado na troca, financiamento bancário até 60x e parcelamento no cartão até 21x. Varginha/MG.</p>
+    </div>
+    <div><h4>Links rápidos</h4><a href="#estoque">Estoque</a><a href="#ofertas">Ofertas</a><a href="#vender">Venda seu carro</a><a href="#sobre">Sobre nós</a></div>
+    <div><h4>Contato</h4><span>(35) 98847-3653</span><a href="https://instagram.com/juniorveiculosvarginhamg" target="_blank">@juniorveiculosvarginhamg</a></div>
+    <div><h4>Institucional</h4><a href="#">Política de privacidade</a><a href="#">Termos de uso</a></div>
+  </div>
+  <div class="foot-bottom"><span>© 2026 Junior Veículos Varginha MG.</span><span>Feito com foco em confiança e qualidade.</span></div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/5535988473653?text=Ol%C3%A1!%20Tenho%20interesse%20em%20um%20ve%C3%ADculo%20anunciado%20no%20site." aria-label="Fale no WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16 2C8.3 2 2 8.3 2 16c0 2.6.7 5.1 2 7.3L2 30l6.9-1.8c2.1 1.2 4.6 1.8 7.1 1.8 7.7 0 14-6.3 14-14S23.7 2 16 2zm0 25.5c-2.2 0-4.4-.6-6.3-1.7l-.4-.3-4.1 1.1 1.1-4-.3-.4C4.8 20.2 4.2 18.1 4.2 16c0-6.5 5.3-11.8 11.8-11.8S27.8 9.5 27.8 16 22.5 27.5 16 27.5zm6.5-8.8c-.4-.2-2.1-1-2.4-1.2s-.6-.2-.8.2-.8 1-1 1.2-.4.2-.7.1c-.4-.2-1.5-.6-2.9-1.8-1.1-1-1.8-2.2-2-2.5-.2-.4 0-.6.2-.8.2-.1.4-.4.5-.6.2-.2.2-.4.3-.6.1-.2.1-.4 0-.6s-.8-2-1.2-2.7c-.3-.7-.6-.6-.8-.6h-.7c-.2 0-.6.1-.9.4-.3.4-1.2 1.1-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.9 5.1.8.4 1.5.6 2 .7.8.2 1.6.2 2.2.1.7-.1 2.1-.8 2.4-1.6.3-.8.3-1.4.2-1.6-.1-.1-.4-.2-.8-.4z"/></svg>
+</a>
+
+<script>
+/* ---- hero por vídeo sincronizado com o scroll ---- */
+(() => {
+  const section = document.getElementById('heroScroll');
+  const video = document.getElementById('heroVideo');
+  if (!section || !video) return;
+  let raf = 0, ready = false, lastTime = -1;
+  video.muted = true; video.playsInline = true; video.pause();
+  function render(){
+    raf = 0;
+    if (!ready || !Number.isFinite(video.duration) || video.duration <= 0) return;
+    const rect = section.getBoundingClientRect();
+    const travel = Math.max(1, section.offsetHeight - window.innerHeight);
+    const progress = Math.max(0, Math.min(1, -rect.top / travel));
+    const time = progress * video.duration;
+    if (Math.abs(time - lastTime) > 0.003) { lastTime = time; video.currentTime = time; }
+  }
+  function requestRender(){ if (!raf) raf = requestAnimationFrame(render); }
+  video.addEventListener('loadedmetadata', () => { ready = true; requestRender(); }, {once:true});
+  video.addEventListener('canplay', () => { ready = true; requestRender(); }, {once:true});
+  window.addEventListener('scroll', requestRender, {passive:true});
+  window.addEventListener('resize', requestRender);
+  requestRender();
+})();
+</script>
+</body>
+</html>
